@@ -1,1 +1,57 @@
+import os
+import numpy as np
+import matplotlib.pyplot as plt
+import imageio
+from random import uniform
 
+L_horizontal = 10
+L_vertical = 10
+N = 1
+
+position = np.zeros((N, 2))
+
+for i in range(N):
+    position[i, 0] = uniform(0, L_vertical)
+    position[i, 1] = uniform(0, L_horizontal)
+    
+theta = uniform(0, 360*np.pi/180)
+
+t = np.linspace(0, 10, 100)
+t_max = 100
+dt = 0.1
+
+vitesse = 0.3
+
+y = np.random.randint(30, 40, size=(40))
+
+T = []
+for i in range(len(t)):
+    X = position[0,0]+ vitesse*np.cos(theta)*t[i]
+    Y = position[0,1]+ vitesse*np.sin(theta)*t[i]
+    T.append([X, Y])
+
+filenames = []
+for i in range(len(t)):
+    # plot the line chart
+    X = position[0,0]+ vitesse*np.cos(theta)*t[i]
+    Y = position[0,1]+ vitesse*np.sin(theta)*t[i]
+    plt.plot(X, Y, 'ro')
+    plt.ylim(0, L_horizontal)
+    plt.xlim(0, L_vertical)
+    
+    # create file name and append it to a list
+    filename = f'{i}.png'
+    filenames.append(filename)
+    
+    # save frame
+    plt.savefig(filename)
+    plt.close()
+# build gif
+with imageio.get_writer('poisson.gif', mode='I') as writer:
+    for filename in filenames:
+        image = imageio.imread(filename)
+        writer.append_data(image)
+        
+# Remove files
+for filename in set(filenames):
+    os.remove(filename)
